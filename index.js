@@ -6,10 +6,10 @@ const { WebhookClient, EmbedBuilder } = require('discord.js');
 const app = express();
 app.use(express.json()); 
 
-// Variabel dari environment (di Vercel, ini diambil dari Dashboard > Settings > Environment Variables)
+// Variabel dari environment Varcel
 const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
-// Validasi Webhook (Tanpa process.exit agar serverless instance tidak crash)
+// Validasi Webhook (Tanpa process.exit biar instance tidak crash)
 let webhookClient;
 if (!webhookUrl) {
     console.error('[FATAL ERROR] DISCORD_WEBHOOK_URL tidak dikonfigurasi!');
@@ -18,7 +18,7 @@ if (!webhookUrl) {
 }
 
 app.post('/saweria', async (req, res) => {
-    // Tambahan pengaman: Jika webhookUrl kosong, kembalikan HTTP 500
+    // Tambah Eror Pengaman: Jika webhookUrl kosong, return HTTP 500
     if (!webhookClient) {
         return res.status(500).json({ status: 'error', message: 'Webhook URL belum dikonfigurasi di server.' });
     }
@@ -58,7 +58,7 @@ app.post('/saweria', async (req, res) => {
             gifMedia = gifBiasa[Math.floor(Math.random() * gifBiasa.length)];
         }
 
-        // Pernak-pernik Embed Builder
+        // Pernak pernik Embed Builder
         const embed = new EmbedBuilder()
             .setAuthor({ 
                 name: `${donator} baru saja menyawer!`, 
@@ -90,5 +90,5 @@ app.post('/saweria', async (req, res) => {
     }
 });
 
-// HAPUS app.listen dan GANTI dengan module.exports
+// GANTI dengan module.exports
 module.exports = app;
