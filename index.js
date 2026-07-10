@@ -32,8 +32,7 @@ app.post('/saweria', async (req, res) => {
 
         const formatRupiah = new Intl.NumberFormat('id-ID').format(amount);
         let warnaEmbed = 0xFFD700;
-        let pesanLuar = `# Yay! Makasih **${donator}** 
-                        udah traktir **Rp${formatRupiah}**! Lumayan buat beli kopi ☕`;
+        let pesanLuar = `# Yay! Makasih **${donator}** \ udah traktir **Rp${formatRupiah}**! Lumayan buat beli kopi ☕`;
         let gifMedia = "https://media.giphy.com/media/3o6UB5RrlQuMfZp82Y/giphy.gif";
 
         if (amount >= 100000) {
