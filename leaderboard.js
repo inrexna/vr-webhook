@@ -7,59 +7,74 @@ async function updateAndGetLeaderboard(donator, amount, accessKey, binId) {
         return leaderboardText;
     }
 
+    
+    const numericAmount = Number(amount) || 0;
+
     try {
-        // 1. Ambil data terakhir dari JSONBin (GET)
+        // Ambil data terakhir dari JSONBin (GET)
         const getRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
             headers: { 'X-Access-Key': accessKey }
         });
+
+        // Validasi respons HTTP GET
+        if (!getRes.ok) {
+            const errJson = await getRes.json().catch(() => ({}));
+            throw new Error(`JSONBin GET Gagal (${getRes.status}): ${errJson.message || 'Unknown Error'}`);
+        }
+
         const getJson = await getRes.json();
         
-        // Mengambil objek "donators", jika JSON kosong, buat struktur dasar
+        // Ekstraksi record aman
         let database = getJson.record || { donators: {} };
-        if (!database.donators) database.donators = {};
+        if (!database.donators) {
+            database.donators = {};
+        }
         
         let donatorData = database.donators;
-
-        // Buat timestamp saat ini (Format ISO)
         const currentTimestamp = new Date().toISOString();
 
-        // Logika Akumulasi dengan Struktur Objek Baru
+        // Akumulasi Nominal Donasi
         if (donatorData[donator]) {
-            // Jika donatur sudah ada: tambah saldo dan update waktu terakhir
-            donatorData[donator].amount += amount;
+            // nilai lama juga dikonversi ke Number sebelum dijumlahkan
+            const currentAmount = Number(donatorData[donator].amount) || 0;
+            donatorData[donator].amount = currentAmount + numericAmount;
             donatorData[donator].last_timestamp = currentTimestamp;
         } else {
-            // Jika donatur baru: buat ID unik, set saldo, dan set waktu
             const uniqueId = `id-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
             
             donatorData[donator] = {
                 id: uniqueId,
                 name: donator,
-                amount: amount,
+                amount: numericAmount,
                 last_timestamp: currentTimestamp
             };
         }
 
-        // Kembalikan data yang sudah diperbarui ke dalam variabel utama
         database.donators = donatorData;
 
-        // Simpan pembaruan kembali ke JSONBin (PUT)
-        await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+        // Save update ke JSONBin (PUT)
+        const putRes = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Access-Key': accessKey
             },
-            body: JSON.stringify(database) // Simpan keseluruhan struktur database
+            body: JSON.stringify(database)
         });
 
-        // Urutkan donatur berdasarkan amount (Menggunakan Object.values)
+        // Validasi respons HTTP PUT
+        if (!putRes.ok) {
+            const errJson = await putRes.json().catch(() => ({}));
+            throw new Error(`JSONBin PUT Gagal (${putRes.status}): ${errJson.message || 'Unknown Error'}`);
+        }
+
+        // Urutan donatur Descending
         const sortedDonators = Object.values(donatorData)
-            .filter(user => user.amount > 0) // Filter placeholder
-            .sort((a, b) => b.amount - a.amount) // Descending
+            .filter(user => user && typeof user.amount === 'number' && user.amount > 0)
+            .sort((a, b) => b.amount - a.amount)
             .slice(0, 10); // Ambil Top 10
 
-        // Ubah hasil urutan menjadi teks berformat
+        // Convert data array menjadi teks format Discord
         leaderboardText = sortedDonators.map((user, index) => {
             const total = new Intl.NumberFormat('id-ID').format(user.amount);
             
@@ -71,7 +86,7 @@ async function updateAndGetLeaderboard(donator, amount, accessKey, binId) {
             return `${rankIcon} **${user.name}** - Rp${total}`;
         }).join('\n');
 
-        // Proteksi anticrash jika leaderboard kosong
+        // string kosong 
         if (!leaderboardText || leaderboardText.trim() === "") {
             leaderboardText = "✨ *Belum ada donatur resmi saat ini. Yuk jadi yang pertama!* ✨";
         }
@@ -79,7 +94,8 @@ async function updateAndGetLeaderboard(donator, amount, accessKey, binId) {
         return leaderboardText;
 
     } catch (error) {
-        console.error('[ERROR] Gagal memproses leaderboard:', error);
+        // Runtime Logs 
+        console.error('[LEADERBOARD CRITICAL ERROR]:', error.message || error);
         return "⚠️ Gagal memuat leaderboard saat ini.";
     }
 }
