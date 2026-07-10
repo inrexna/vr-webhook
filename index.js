@@ -54,8 +54,8 @@ app.post('/saweria', async (req, res) => {
               name: "Donation!!"
               // url:  ""
             })
-            .setTitle(`Thank You **${donator}** Orang Baik🫶🏻🫶🏻🫶🏻`)
-            .setDescription(`### **Nominal:** Rp${formatRupiah}\n\n**Pesan:**\n>*"${message}"*`)
+            .setTitle(`Thank You **${donator}** Orang Baik 🫶🏻🫶🏻🫶🏻`)
+            .setDescription(`**Nominal:** Rp${formatRupiah}\n\n**Pesan:**\n>*"${message}"*`)
             .setColor(warnaEmbed)
             .setImage(gifMedia)
             .setThumbnail('https://saweria.co/assets/img/logo.png')
