@@ -32,7 +32,8 @@ app.post('/saweria', async (req, res) => {
 
         const formatRupiah = new Intl.NumberFormat('id-ID').format(amount);
         let warnaEmbed = 0xFFD700;
-        let pesanLuar = `Yay! Makasih **${donator}** udah traktir **Rp${formatRupiah}**! Lumayan buat beli kopi ☕`;
+        let pesanLuar = `# Yay! Makasih **${donator}** 
+                        udah traktir **Rp${formatRupiah}**! Lumayan buat beli kopi ☕`;
         let gifMedia = "https://media.giphy.com/media/3o6UB5RrlQuMfZp82Y/giphy.gif";
 
         if (amount >= 100000) {
@@ -53,7 +54,7 @@ app.post('/saweria', async (req, res) => {
             .setTitle('💸 Rincian Saweran')
             .setDescription(`**Nominal:** Rp${formatRupiah}\n\n**Pesan:**\n> *"${message}"*`)
             .setColor(warnaEmbed)
-            .setImage(gifMedia)
+            .setImage(gifMedi)
             .setThumbnail('https://saweria.co/assets/img/logo.png')
             .addFields({ name: '🏆 Top 10 Donators Sepanjang Masa', value: leaderboardText })
             .setFooter({ text: 'Notifikasi Otomatis Webhook', iconURL: 'https://cdn-icons-png.flaticon.com/512/825/825590.png' })
@@ -61,6 +62,7 @@ app.post('/saweria', async (req, res) => {
 
         await webhookClient.send({
             content: pesanLuar, 
+            // content: "", 
             embeds: [embed],
         });
 
