@@ -51,8 +51,8 @@ app.post('/saweria', async (req, res) => {
         const embed = new EmbedBuilder()
             // .setAuthor({ name: `${donator} baru saja menyawer!`, iconURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' })
             .setAuthor({
-              name: "Donation!!",
-              url:  ""
+              name: "Donation!!"
+              // url:  ""
             })
             .setTitle(`Thank You **${donator}** Orang Baik🫶🏻🫶🏻🫶🏻`)
             .setDescription(`### **Nominal:** Rp${formatRupiah}\n\n**Pesan:**\n>*"${message}"*`)
