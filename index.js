@@ -49,22 +49,24 @@ app.post('/saweria', async (req, res) => {
         const leaderboardText = await updateAndGetLeaderboard(donator, amount, jsonbinAccessKey, jsonbinBinId);
 
         const embed = new EmbedBuilder()
-            // .setAuthor({ name: `${donator} baru saja menyawer!`, iconURL: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' })
             .setAuthor({
               name: "Donation!!"
-              // url:  ""
             })
-            .setTitle(`Thank You **${donator}** Orang Baik 🫶🏻🫶🏻🫶🏻`)
-            .setDescription(`**Nominal:** Rp${formatRupiah}\n\n**Pesan:**\n>*"${message}"*`)
+            .setTitle(`🫶🏻Thank You **${donator}** Orang Baik`)
+            .setDescription(
+              `**Amount:** Rp${formatRupiah}\n
+              \n**Pesan:**\n
+              >*"${message}"*`
+            )
             .setColor(warnaEmbed)
             .setImage(gifMedia)
             .setThumbnail('https://saweria.co/assets/img/logo.png')
             .addFields({ name: '🏆 Top 10 Donators Sepanjang Masa', value: leaderboardText })
-            .setFooter({ text: 'Notifikasi Otomatis Webhook', iconURL: 'https://cdn-icons-png.flaticon.com/512/825/825590.png' })
+            .setFooter({ text: 'Media', url: 'https://linktr.ee/toyoutth' })
             .setTimestamp();
 
         await webhookClient.send({
-            content: "### New donation!!", 
+            content: "**💵New donation!!**", 
             embeds: [embed],
         });
 
